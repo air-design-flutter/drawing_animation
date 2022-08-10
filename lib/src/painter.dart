@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'debug.dart';
 import 'parser.dart';
@@ -13,16 +12,7 @@ import 'types.dart';
 
 /// Paints a list of [PathSegment] to canvas
 class PaintedPainter extends PathPainter {
-  PaintedPainter(
-      Animation<double> animation,
-      List<PathSegment> pathSegments,
-      Size? customDimensions,
-      List<Paint> paints,
-      PaintedSegmentCallback? onFinishCallback,
-      bool scaleToViewport,
-      DebugOptions debugOptions)
-      : super(animation, pathSegments, customDimensions, paints,
-            onFinishCallback, scaleToViewport, debugOptions);
+  PaintedPainter(Animation<double> animation, List<PathSegment> pathSegments, Size? customDimensions, List<Paint> paints, PaintedSegmentCallback? onFinishCallback, bool scaleToViewport, DebugOptions debugOptions) : super(animation, pathSegments, customDimensions, paints, onFinishCallback, scaleToViewport, debugOptions);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -48,16 +38,7 @@ class PaintedPainter extends PathPainter {
 
 /// Paints a list of [PathSegment] all-at-once to a canvas
 class AllAtOncePainter extends PathPainter {
-  AllAtOncePainter(
-      Animation<double> animation,
-      List<PathSegment> pathSegments,
-      Size? customDimensions,
-      List<Paint> paints,
-      PaintedSegmentCallback? onFinishCallback,
-      bool scaleToViewport,
-      DebugOptions debugOptions)
-      : super(animation, pathSegments, customDimensions, paints,
-            onFinishCallback, scaleToViewport, debugOptions);
+  AllAtOncePainter(Animation<double> animation, List<PathSegment> pathSegments, Size? customDimensions, List<Paint> paints, PaintedSegmentCallback? onFinishCallback, bool scaleToViewport, DebugOptions debugOptions) : super(animation, pathSegments, customDimensions, paints, onFinishCallback, scaleToViewport, debugOptions);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -65,10 +46,7 @@ class AllAtOncePainter extends PathPainter {
     if (canPaint) {
       //pathSegments for AllAtOncePainter are always in the order of PathOrders.original
       pathSegments!.forEach((segment) {
-        var subPath = segment.path
-            .computeMetrics()
-            .first
-            .extractPath(0, segment.length * animation.value);
+        var subPath = segment.path.computeMetrics().first.extractPath(0, segment.length * animation.value);
 
         var paint = (paints.isNotEmpty)
             ? paints[segment.pathIndex]
@@ -87,17 +65,9 @@ class AllAtOncePainter extends PathPainter {
 
 /// Paints a list of [PathSegment] one-by-one to a canvas
 class OneByOnePainter extends PathPainter {
-  OneByOnePainter(
-      Animation<double> animation,
-      List<PathSegment> pathSegments,
-      Size? customDimensions,
-      List<Paint> paints,
-      PaintedSegmentCallback? onFinishCallback,
-      bool scaleToViewport,
-      DebugOptions debugOptions)
+  OneByOnePainter(Animation<double> animation, List<PathSegment> pathSegments, Size? customDimensions, List<Paint> paints, PaintedSegmentCallback? onFinishCallback, bool scaleToViewport, DebugOptions debugOptions)
       : totalPathSum = 0,
-        super(animation, pathSegments, customDimensions, paints,
-            onFinishCallback, scaleToViewport, debugOptions) {
+        super(animation, pathSegments, customDimensions, paints, onFinishCallback, scaleToViewport, debugOptions) {
     if (this.pathSegments != null) {
       this.pathSegments!.forEach((e) => totalPathSum += e.length);
     }
@@ -137,10 +107,7 @@ class OneByOnePainter extends PathPainter {
       var subPathLength = upperBound - currentLength;
       var lastPathSegment = pathSegments![currentIndex];
 
-      var subPath = lastPathSegment.path
-          .computeMetrics()
-          .first
-          .extractPath(0, subPathLength);
+      var subPath = lastPathSegment.path.computeMetrics().first.extractPath(0, subPathLength);
       paintedSegmentIndex = currentIndex;
       _paintedLength = currentLength;
       // //[3] Paint all selected paths to canvas
@@ -158,8 +125,7 @@ class OneByOnePainter extends PathPainter {
       }
       //[3.2] Restore rendering order - last path element in original PathOrder should be last painted -> most visible
       //[3.3] Paint elements
-      (toPaint..sort(Extractor.getComparator(PathOrders.original)))
-          .forEach((segment) {
+      (toPaint..sort(Extractor.getComparator(PathOrders.original))).forEach((segment) {
         paint = (paints.isNotEmpty)
             ? paints[segment.pathIndex]
             : (Paint() //Paint per path TODO implement Paint per PathSegment?
@@ -192,14 +158,7 @@ class OneByOnePainter extends PathPainter {
 
 /// Abstract implementation of painting a list of [PathSegment] elements to a canvas
 abstract class PathPainter extends CustomPainter {
-  PathPainter(
-      this.animation,
-      this.pathSegments,
-      this.customDimensions,
-      this.paints,
-      this.onFinishCallback,
-      this.scaleToViewport,
-      this.debugOptions)
+  PathPainter(this.animation, this.pathSegments, this.customDimensions, this.paints, this.onFinishCallback, this.scaleToViewport, this.debugOptions)
       : canPaint = false,
         super(repaint: animation) {
     calculateBoundingBox();
@@ -259,15 +218,12 @@ abstract class PathPainter extends CustomPainter {
   void onFinish(Canvas canvas, Size size, {int lastPainted = -1}) {
     //-1: no segment was painted yet, 0 first segment
     if (debugOptions.recordFrames) {
-      final  picture = recorder.endRecording();
+      final picture = recorder.endRecording();
       var frame = getFrameCount(debugOptions);
       if (frame >= 0) {
         print('Write frame $frame');
         //pass size when you want the whole viewport of the widget
-        writeToFile(
-            picture,
-            '${debugOptions.outPutDir}/${debugOptions.fileName}_$frame.png',
-            size);
+        writeToFile(picture, '${debugOptions.outPutDir}/${debugOptions.fileName}_$frame.png', size);
       }
     }
     onFinishCallback!(lastPainted);
@@ -280,36 +236,23 @@ abstract class PathPainter extends CustomPainter {
       //Color background
       // canvas.drawColor(Color.fromRGBO(224, 121, 42, 1.0),BlendMode.srcOver);
       //factor for higher resolution
-      canvas.scale(debugOptions.resolutionFactor,
-          debugOptions.resolutionFactor);
+      canvas.scale(debugOptions.resolutionFactor, debugOptions.resolutionFactor);
     }
     paintPrepare(canvas, size);
     return canvas;
   }
 
   void paintPrepare(Canvas canvas, Size size) {
-    canPaint = animation.status == AnimationStatus.forward ||
-        animation.status == AnimationStatus.completed;
+    canPaint = animation.status == AnimationStatus.forward || animation.status == AnimationStatus.completed;
 
     if (canPaint) viewBoxToCanvas(canvas, size);
   }
 
-  Future<void> writeToFile(
-      ui.Picture picture, String fileName, Size size) async {
+  Future<void> writeToFile(ui.Picture picture, String fileName, Size size) async {
     var scale = calculateScaleFactor(size);
-    var byteData = await ((await picture.toImage(
-            (scale.x *
-                    debugOptions.resolutionFactor *
-                    pathBoundingBox!.width)
-                .round(),
-            (scale.y *
-                    debugOptions.resolutionFactor *
-                    pathBoundingBox!.height)
-                .round()))
-        .toByteData(format: ui.ImageByteFormat.png));
+    var byteData = await ((await picture.toImage((scale.x * debugOptions.resolutionFactor * pathBoundingBox!.width).round(), (scale.y * debugOptions.resolutionFactor * pathBoundingBox!.height).round())).toByteData(format: ui.ImageByteFormat.png));
     final buffer = byteData!.buffer;
-    await File(fileName).writeAsBytes(
-        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await File(fileName).writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
     print('File: $fileName written.');
   }
 
@@ -354,9 +297,7 @@ abstract class PathPainter extends CustomPainter {
 
     if (scaleToViewport) {
       //Viewbox with Offset.zero
-      var viewBox = (customDimensions != null)
-          ? customDimensions
-          : Size.copy(size);
+      var viewBox = (customDimensions != null) ? customDimensions : Size.copy(size);
       var scale = calculateScaleFactor(viewBox!);
       canvas.scale(scale.x, scale.y);
 
@@ -366,9 +307,7 @@ abstract class PathPainter extends CustomPainter {
 
       //Center offset - TODO should this be a option flag?
       if (debugOptions.recordFrames != true) {
-        var center = Offset(
-            (size.width / scale.x - pathBoundingBox!.width) / 2,
-            (size.height / scale.y - pathBoundingBox!.height) / 2);
+        var center = Offset((size.width / scale.x - pathBoundingBox!.width) / 2, (size.height / scale.y - pathBoundingBox!.height) / 2);
         canvas.translate(center.dx, center.dy);
       }
     }

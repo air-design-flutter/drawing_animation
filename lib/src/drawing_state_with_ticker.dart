@@ -5,18 +5,16 @@ import 'abstract_drawing_state.dart';
 import 'drawing_widget.dart';
 
 /// A state implementation with an implemented animation controller to simplify the animation process
-class AnimatedDrawingWithTickerState extends AbstractAnimatedDrawingState
-    with SingleTickerProviderStateMixin {
+class AnimatedDrawingWithTickerState extends AbstractAnimatedDrawingState with SingleTickerProviderStateMixin {
   AnimatedDrawingWithTickerState() : super() {
     onFinishAnimation = () {
       if (onFinishEvoked == false) {
         onFinishEvoked = true;
-        SchedulerBinding.instance!.addPostFrameCallback((_) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
           onFinishAnimationDefault();
         });
         //Animation is completed when last frame is painted not when animation controller is finished
-        if (controller!.status == AnimationStatus.dismissed ||
-            controller!.status == AnimationStatus.completed) {
+        if (controller!.status == AnimationStatus.dismissed || controller!.status == AnimationStatus.completed) {
           finished = true;
         }
       }
@@ -58,17 +56,13 @@ class AnimatedDrawingWithTickerState extends AbstractAnimatedDrawingState
 //
   Future<void> buildAnimation() async {
     try {
-      if ((paused ||
-              (finished &&
-                  (controller!.status == AnimationStatus.forward) == false)) &&
-          widget.run == true) {
+      if ((paused || (finished && (controller!.status == AnimationStatus.forward) == false)) && widget.run == true) {
         paused = false;
         finished = false;
         controller!.reset();
         onFinishEvoked = false;
         await controller!.forward();
-      } else if ((controller!.status == AnimationStatus.forward) &&
-          widget.run == false) {
+      } else if ((controller!.status == AnimationStatus.forward) && widget.run == false) {
         controller!.stop();
         paused = true;
       }

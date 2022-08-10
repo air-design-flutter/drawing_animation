@@ -1,6 +1,5 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import 'abstract_drawing_state.dart';
 import 'debug.dart';
 import 'drawing_state.dart';
@@ -190,7 +189,6 @@ class AnimatedDrawing extends StatefulWidget {
 
   // TODO Refactor SRP
   void assertAnimationParameters() {
-    assert(!(controller == null &&
-        (run == null || duration == null)));
+    assert(!(controller == null && (run == null || duration == null)));
   }
 }

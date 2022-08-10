@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+
 import 'abstract_drawing_state.dart';
 import 'drawing_widget.dart';
 
@@ -9,7 +10,7 @@ class AnimatedDrawingState extends AbstractAnimatedDrawingState {
     onFinishAnimation = () {
       if (onFinishEvoked == false) {
         onFinishEvoked = true;
-        SchedulerBinding.instance!.addPostFrameCallback((_) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
           onFinishAnimationDefault();
         });
       }
